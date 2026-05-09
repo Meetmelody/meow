@@ -69,7 +69,7 @@ reborn-as-a-cat/
         ├── config/
         │   ├── constants.js           # 颜色 / 字体 / 场景键 / 纹理键 / 事件键 / PLAYER_INIT / RULES / STATUS / 房间状态 / SAVE_KEY
         │   ├── gameConfig.js          # createGameConfig()，注册 8 个场景
-        │   └── assetManifest.js       # 真实图片路径清单 + ROOM_BATTLE_BG + ENEMY_PORTRAIT
+        │   └── assetManifest.js       # 真实图片路径清单 + ROOM_BATTLE_BG + ENEMY_PORTRAIT + EVENT_BG
         ├── data/                      # ↓↓↓ 全部"数据驱动"，新增内容主要在这里
         │   ├── cards.js               # 8 张卡 + STARTER_DECK_RECIPE + REWARD_POOL_IDS
         │   ├── enemies.js             # 4 个敌人（含 Boss）+ pattern 字符串
@@ -247,6 +247,8 @@ reborn-as-a-cat/
 - `resolveTexture(scene, key)`：scene 已有 → 返回；否则查 `assetManifest.fallback`；都没有 → `TEXTURES.PLACEHOLDER`
 - `resolveBattleBackground(scene, roomId)`：按 roomId 查 `ROOM_BATTLE_BG`
 - `resolveEnemyPortrait(scene, enemyId)`：按 enemyId 查 `ENEMY_PORTRAIT`
+- `resolveEventBackground(scene, eventId)`：按 eventId 查 `EVENT_BG`，缺失回到 `BG_MAP`
+- `hasRealTexture(scene, key)`：判断"真贴图"是否真的加载成功；用于场景按真图 / 占位走轻 / 重蒙版分支（`EventScene` 已使用）
 - 新增贴图：在 `assetManifest.js` 加一行；占位会自动 fallback
 
 ### 6.8 `statusPresentation.js`
@@ -449,7 +451,7 @@ DemoClearScene
 - ⚠️ **`relics`** 仅有 `warm_cushion` 占位，**实际效果未生效**。
 - ⚠️ **`Wet` debuff** 当前仅扣下回合能量；不会在 UI 上播放粒子等强反馈。
 - ⚠️ **Tooltip 不跟随鼠标移动**，固定显示在徽章上方；徽章很靠屏幕边缘时已做夹边处理。
-- ⚠️ **背景图片** 客厅以外（厨房 / 书房 / 阁楼）当前都 **fallback 到客厅占位** + 全场暗色蒙版区分；放真实图后自动覆盖。
+- ⚠️ **背景图片** 客厅以外（厨房 / 书房 / 阁楼 / 窗台事件）当前都 **fallback 到占位**（厨/书/阁回到客厅；窗台回到月夜地图）+ 全场暗色蒙版区分；放真实图后自动覆盖。`EventScene` 检测到真图会把蒙版从 `0.6` 降到 `0.25`，月光圆叠加亦同步减弱，避免压暗插画。
 - ⚠️ **构建产物 1.2 MB+**：Phaser 全量打包；后续可考虑按需 import / 拆 chunk。
 
 ### 不是 bug 但要注意
@@ -510,7 +512,7 @@ DemoClearScene
 | `systems/assetResolver.js` | 真图 vs 占位 fallback |
 | `config/constants.js` | **唯一**集中放魔法值的地方（颜色 / 字体 / 场景键 / 事件键 / 状态键 / 玩家初值 / 规则）|
 | `config/gameConfig.js` | Phaser 配置 + 场景注册 |
-| `config/assetManifest.js` | 资源清单 + ROOM_BATTLE_BG / ENEMY_PORTRAIT 映射 |
+| `config/assetManifest.js` | 资源清单 + ROOM_BATTLE_BG / ENEMY_PORTRAIT / EVENT_BG 映射 |
 | `ui/*` | 渲染层；不允许直接修改 runState / combat |
 | `scenes/*` | 装配层；不写业务规则，只调系统 + 渲染 UI |
 

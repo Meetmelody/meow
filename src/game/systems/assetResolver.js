@@ -11,7 +11,7 @@
  *   - 真实美术资源不到位时，游戏不能崩
  *   - 美术到位后，单点替换（往 public/assets 丢图），不需要改代码
  */
-import { IMAGE_MANIFEST, ROOM_BATTLE_BG, ENEMY_PORTRAIT } from '../config/assetManifest.js';
+import { IMAGE_MANIFEST, ROOM_BATTLE_BG, ENEMY_PORTRAIT, EVENT_BG } from '../config/assetManifest.js';
 import { TEXTURES } from '../config/constants.js';
 
 const fallbackMap = new Map();
@@ -46,4 +46,21 @@ export function resolveBattleBackground(scene, roomId) {
 export function resolveEnemyPortrait(scene, enemyId) {
   const desired = ENEMY_PORTRAIT[enemyId] || TEXTURES.ROOMBA_GUARD;
   return resolveTexture(scene, desired);
+}
+
+/**
+ * 事件 id → 事件背景纹理 key
+ * 缺失时回到 BG_MAP（与旧版 EventScene 行为一致）
+ */
+export function resolveEventBackground(scene, eventId) {
+  const desired = EVENT_BG[eventId] || TEXTURES.BG_MAP;
+  return resolveTexture(scene, desired);
+}
+
+/**
+ * 判断指定 key 的真实贴图是否已加载
+ * 给场景在"是否为真图"上做轻量分支用（如根据真图调整蒙版强度）
+ */
+export function hasRealTexture(scene, key) {
+  return Boolean(scene?.textures?.exists(key));
 }

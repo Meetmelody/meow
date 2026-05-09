@@ -11,12 +11,13 @@ import {
   HEX,
   COLORS,
   FONTS,
-  TEXTURES,
 } from '../config/constants.js';
 import { getLang, t } from '../systems/localizationSystem.js';
 import { getEventDef } from '../data/events.js';
 import { applyEventOption } from '../systems/eventSystem.js';
 import { markRoomCleared, saveRun } from '../systems/runState.js';
+import { resolveEventBackground, hasRealTexture } from '../systems/assetResolver.js';
+import { EVENT_BG } from '../config/assetManifest.js';
 import TextButton from '../ui/TextButton.js';
 import LanguageToggleButton from '../ui/LanguageToggleButton.js';
 
@@ -33,19 +34,26 @@ export default class EventScene extends Phaser.Scene {
   }
 
   create() {
-    /* 背景 */
+    /* 背景：优先取事件专属插画，缺失则回到月夜地图 */
+    const bgKey = resolveEventBackground(this, this.payload.eventId);
     this.add
-      .image(GAME_WIDTH / 2, GAME_HEIGHT / 2, TEXTURES.BG_MAP)
+      .image(GAME_WIDTH / 2, GAME_HEIGHT / 2, bgKey)
       .setDisplaySize(GAME_WIDTH, GAME_HEIGHT);
+
+    /* 真图存在 → 轻蒙版（避免压暗插画细节）；占位时 → 重蒙版（保证文字可读） */
+    const desiredKey = EVENT_BG[this.payload.eventId];
+    const isCustomBg = desiredKey && hasRealTexture(this, desiredKey);
+    const overlayAlpha = isCustomBg ? 0.25 : 0.6;
     const overlay = this.add.graphics();
-    overlay.fillStyle(0x000000, 0.6);
+    overlay.fillStyle(0x000000, overlayAlpha);
     overlay.fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
 
-    /* 月光圆 */
+    /* 月光圆：自定义背景时降低叠加，避免与插画冲突 */
+    const moonAlphaMul = isCustomBg ? 0.45 : 1;
     const moon = this.add.graphics();
-    moon.fillStyle(0x9bb8d8, 0.06);
+    moon.fillStyle(0x9bb8d8, 0.06 * moonAlphaMul);
     moon.fillCircle(GAME_WIDTH / 2, 200, 220);
-    moon.fillStyle(0xfff5d6, 0.1);
+    moon.fillStyle(0xfff5d6, 0.1 * moonAlphaMul);
     moon.fillCircle(GAME_WIDTH / 2, 200, 110);
 
     const def = getEventDef(this.payload.eventId);

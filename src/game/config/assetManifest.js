@@ -22,6 +22,7 @@ export const IMAGE_MANIFEST = [
   { key: 'bg_kitchen', path: 'assets/images/backgrounds/kitchen.png', fallback: TEXTURES.BG_LIVING_ROOM },
   { key: 'bg_study', path: 'assets/images/backgrounds/study.png', fallback: TEXTURES.BG_LIVING_ROOM },
   { key: 'bg_attic', path: 'assets/images/backgrounds/attic.png', fallback: TEXTURES.BG_LIVING_ROOM },
+  { key: 'bg_event_windowsill', path: 'assets/images/backgrounds/event_windowsill.png', fallback: TEXTURES.BG_MAP },
 
   /* ========= 角色 ========= */
   { key: TEXTURES.SIR_ORANGE, path: 'assets/images/characters/sir_orange.png', fallback: TEXTURES.SIR_ORANGE },
@@ -62,4 +63,12 @@ export const ENEMY_PORTRAIT = {
   fridge_wisp: 'fridge_wisp',
   paper_sprite: 'paper_sprite',
   sofa_shadow: 'sofa_shadow',
+};
+
+/**
+ * 事件 id → 事件背景纹理 key 的映射
+ * EventScene 通过 resolveEventBackground(eventId) 取背景
+ */
+export const EVENT_BG = {
+  moonlight_windowsill: 'bg_event_windowsill',
 };
