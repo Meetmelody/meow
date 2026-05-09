@@ -105,9 +105,13 @@ export default class MainMenuScene extends Phaser.Scene {
       });
     });
 
-    /* 存档摘要面板（在 Continue 按钮右侧）*/
-    this.summaryPanel = new SaveSummaryPanel(this, cx + 280, 510);
+    /* 存档摘要面板：默认隐藏，hover 到 Continue 时滑入显示
+       位置在 Continue 右侧 360px（按钮右边缘 x=780，面板左边缘 x=840，留 60px 间距）*/
+    this._summaryX = cx + 360;
+    this.summaryPanel = new SaveSummaryPanel(this, this._summaryX - 12, 510);
     this.summaryPanel.update(getSaveSummary());
+    this.summaryPanel.setAlpha(0);
+    this._bindSummaryHover(continueBtn);
 
     /* 底部存档提示 */
     this.add
@@ -132,6 +136,35 @@ export default class MainMenuScene extends Phaser.Scene {
     if (!ok) return;
     this._toast(t('saveLoadedToast'));
     this.time.delayedCall(420, () => this.scene.start(SCENES.MAP));
+  }
+
+  /**
+   * 绑定 Continue 按钮的 hover 显隐摘要面板
+   * - 无存档时不展示（按钮 disabled，pointerover 也会触发到 Container 但我们这里再保护一层）
+   * - 用独立 tween 引用避免与 BaseButton 的 scale tween 互相打架
+   */
+  _bindSummaryHover(continueBtn) {
+    continueBtn.on('pointerover', () => {
+      if (!hasSave()) return;
+      if (this._summaryTween) this._summaryTween.stop();
+      this._summaryTween = this.tweens.add({
+        targets: this.summaryPanel,
+        alpha: 1,
+        x: this._summaryX,
+        duration: 200,
+        ease: 'Sine.easeOut',
+      });
+    });
+    continueBtn.on('pointerout', () => {
+      if (this._summaryTween) this._summaryTween.stop();
+      this._summaryTween = this.tweens.add({
+        targets: this.summaryPanel,
+        alpha: 0,
+        x: this._summaryX - 12,
+        duration: 180,
+        ease: 'Sine.easeIn',
+      });
+    });
   }
 
   _toast(message) {
