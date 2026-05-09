@@ -2,7 +2,13 @@
 
 > A 2D Web card-roguelike prototype where you wake up reborn as a small orange cat in a moonlit manor and must reclaim every room, one battle at a time.
 
-**当前版本 / Current version:** `v0.3 (Polishing Sprint)`
+**当前版本 / Current version:** `v0.3.x (Polishing Sprint · 中文单语精简)`
+
+## 🌐 在线试玩 / Play Online
+
+> **🐾 [https://reborn-as-a-cat.vercel.app](https://reborn-as-a-cat.vercel.app)**
+
+部署在 Vercel，桌面浏览器直接打开就能玩。详细部署说明见 [`DEPLOYMENT.md`](./DEPLOYMENT.md)。
 
 ## 致谢
 
@@ -20,7 +26,7 @@
 
 - **类型 / Genre:** 2D 单机卡牌 Roguelike Demo
 - **平台 / Platform:** Web (desktop browser)
-- **状态 / Status:** Playable demo — 5 rooms, 4 enemies (incl. 1 boss), full run loop with save / load and zh / en localization
+- **状态 / Status:** Playable demo — 5 rooms, 4 enemies (incl. 1 boss), full run loop with save / load (中文单语)
 - **完整设计 + 架构 + 不要做的事 / Full design, architecture & "do-not-touch" list:** see [`PROJECT_CONTEXT.md`](./PROJECT_CONTEXT.md)
 
 ---
@@ -32,7 +38,7 @@
 | Engine | **Phaser 3** (`^3.90.0`) |
 | Build  | **Vite** (`^7.x`) |
 | Language | Vanilla **JavaScript** (ES Modules, no TypeScript) |
-| Persistence | `localStorage` (single save slot + language preference) |
+| Persistence | `localStorage` (single save slot) |
 | Lint | ESLint 9 (flat config) |
 | UI | Pure Phaser `Graphics` placeholders, dropped-in PNG assets auto-override via `assetManifest.js` |
 
@@ -71,7 +77,7 @@ MainMenu  →  Map  →  Living Room  (combat)  →  Reward
 
 - 5 rooms with directed progression (locked → unlocked → cleared)
 - Status effects: `Weak`, `Wet`, `Satisfied` (with hover tooltips)
-- Status badges, save summary on the title screen, in-game language toggle (中文 / EN)
+- Status badges, save summary on the title screen (hover Continue 显示)
 - Boss node has its own pulsing aura on the map
 
 ---
