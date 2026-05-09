@@ -4,8 +4,9 @@
  * - hover 时上浮 + 金色发光，点击触发 onPlay
  */
 import Phaser from 'phaser';
-import { COLORS, HEX, FONTS, CARD_TYPE } from '../config/constants.js';
+import { COLORS, HEX, FONTS, CARD_TYPE, TEXTURES } from '../config/constants.js';
 import { getName, getDesc, getLang, t } from '../systems/localizationSystem.js';
+import { hasRealTexture } from '../systems/assetResolver.js';
 
 const CARD_W = 160;
 const CARD_H = 220;
@@ -72,17 +73,24 @@ export default class CardView extends Phaser.GameObjects.Container {
     this.shadow.fillRoundedRect(-CARD_W / 2 + 4, -CARD_H / 2 + 8, CARD_W, CARD_H, 12);
     this.add(this.shadow);
 
-    /* 边框（深棕底）*/
-    this.frame = this.scene.add.graphics();
-    this.add(this.frame);
+    /* 卡牌底框：有真图（card_frame.png）→ 直接拉伸贴图，跳过 Graphics 描边和内层装饰
+       （真图通常已自带金边和插画区，再叠 Graphics 会撞色撞线）*/
+    this._useImageFrame = hasRealTexture(this.scene, TEXTURES.CARD_FRAME);
+    if (this._useImageFrame) {
+      this.frameImg = this.scene.add.image(0, 0, TEXTURES.CARD_FRAME).setOrigin(0.5);
+      this.frameImg.setDisplaySize(CARD_W, CARD_H);
+      this.add(this.frameImg);
+    } else {
+      /* 占位 Graphics 路径 */
+      this.frame = this.scene.add.graphics();
+      this.add(this.frame);
 
-    /* 类型色条 */
-    this.typeBar = this.scene.add.graphics();
-    this.add(this.typeBar);
+      this.typeBar = this.scene.add.graphics();
+      this.add(this.typeBar);
 
-    /* 中部插画占位（圆形） */
-    this.artBg = this.scene.add.graphics();
-    this.add(this.artBg);
+      this.artBg = this.scene.add.graphics();
+      this.add(this.artBg);
+    }
 
     /* 名称 */
     this.nameText = this.scene.add
@@ -151,29 +159,34 @@ export default class CardView extends Phaser.GameObjects.Container {
   _drawStatic() {
     const tColor = TYPE_COLOR[this.cardDef.type] ?? 0x8a7559;
 
-    this.frame.clear();
-    this.frame.fillStyle(COLORS.panel, 1);
-    this.frame.fillRoundedRect(-CARD_W / 2, -CARD_H / 2, CARD_W, CARD_H, 12);
-    this.frame.fillStyle(0xefe2c2, 0.96);
-    this.frame.fillRoundedRect(-CARD_W / 2 + 8, -CARD_H / 2 + 8, CARD_W - 16, CARD_H - 16, 9);
-    this.frame.lineStyle(2, COLORS.gold, 1);
-    this.frame.strokeRoundedRect(-CARD_W / 2 + 1, -CARD_H / 2 + 1, CARD_W - 2, CARD_H - 2, 11);
-    this.frame.lineStyle(1, COLORS.goldDeep, 0.55);
-    this.frame.strokeRoundedRect(-CARD_W / 2 + 8, -CARD_H / 2 + 8, CARD_W - 16, CARD_H - 16, 9);
+    /* 占位路径下绘制木框 + 类型色条 + 插画底；用真图时全部跳过 */
+    if (this.frame) {
+      this.frame.clear();
+      this.frame.fillStyle(COLORS.panel, 1);
+      this.frame.fillRoundedRect(-CARD_W / 2, -CARD_H / 2, CARD_W, CARD_H, 12);
+      this.frame.fillStyle(0xefe2c2, 0.96);
+      this.frame.fillRoundedRect(-CARD_W / 2 + 8, -CARD_H / 2 + 8, CARD_W - 16, CARD_H - 16, 9);
+      this.frame.lineStyle(2, COLORS.gold, 1);
+      this.frame.strokeRoundedRect(-CARD_W / 2 + 1, -CARD_H / 2 + 1, CARD_W - 2, CARD_H - 2, 11);
+      this.frame.lineStyle(1, COLORS.goldDeep, 0.55);
+      this.frame.strokeRoundedRect(-CARD_W / 2 + 8, -CARD_H / 2 + 8, CARD_W - 16, CARD_H - 16, 9);
+    }
 
-    /* 类型色条（上方）*/
-    this.typeBar.clear();
-    this.typeBar.fillStyle(tColor, 0.5);
-    this.typeBar.fillRect(-CARD_W / 2 + 8, -CARD_H / 2 + 56, CARD_W - 16, 4);
+    if (this.typeBar) {
+      this.typeBar.clear();
+      this.typeBar.fillStyle(tColor, 0.5);
+      this.typeBar.fillRect(-CARD_W / 2 + 8, -CARD_H / 2 + 56, CARD_W - 16, 4);
+    }
 
-    /* 中部插画占位 */
-    this.artBg.clear();
-    this.artBg.fillStyle(tColor, 0.18);
-    this.artBg.fillRoundedRect(-CARD_W / 2 + 16, -10, CARD_W - 32, 76, 8);
-    this.artBg.lineStyle(1, tColor, 0.5);
-    this.artBg.strokeRoundedRect(-CARD_W / 2 + 16, -10, CARD_W - 32, 76, 8);
+    if (this.artBg) {
+      this.artBg.clear();
+      this.artBg.fillStyle(tColor, 0.18);
+      this.artBg.fillRoundedRect(-CARD_W / 2 + 16, -10, CARD_W - 32, 76, 8);
+      this.artBg.lineStyle(1, tColor, 0.5);
+      this.artBg.strokeRoundedRect(-CARD_W / 2 + 16, -10, CARD_W - 32, 76, 8);
+    }
 
-    /* 费用圆章 */
+    /* 费用圆章：始终绘制（攻防数值是核心信息）*/
     this.costBg.clear();
     this.costBg.fillStyle(0x1c1410, 0.95);
     this.costBg.fillCircle(-CARD_W / 2 + 18, -CARD_H / 2 + 18, 18);

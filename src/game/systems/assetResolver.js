@@ -58,9 +58,24 @@ export function resolveEventBackground(scene, eventId) {
 }
 
 /**
- * 判断指定 key 的真实贴图是否已加载
- * 给场景在"是否为真图"上做轻量分支用（如根据真图调整蒙版强度）
+ * 已成功通过 Phaser Loader 加载的真实图片 key 集合
+ * 由 PreloadScene 通过 markRealLoaded 在 filecomplete 事件中填充
+ * 注意：PreloadScene 会为部分 UI key（CARD_FRAME / BUTTON_WOOD / PANEL_WOOD）
+ *       生成 Graphics 占位贴图；scene.textures.exists() 无法区分"真 PNG"和"占位"，
+ *       因此用单独的 Set 标记真正成功加载的资源
  */
-export function hasRealTexture(scene, key) {
-  return Boolean(scene?.textures?.exists(key));
+const realLoadedKeys = new Set();
+
+/**
+ * 由 PreloadScene 在文件加载成功时调用
+ */
+export function markRealLoaded(key) {
+  if (key) realLoadedKeys.add(key);
+}
+
+/**
+ * 判断指定 key 的真实图片是否已加载（用于"有真图走真图、无真图走占位"分支）
+ */
+export function hasRealTexture(_scene, key) {
+  return realLoadedKeys.has(key);
 }

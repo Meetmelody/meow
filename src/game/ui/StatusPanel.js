@@ -4,9 +4,10 @@
  * - update(player) 重新渲染数值与状态
  */
 import Phaser from 'phaser';
-import { COLORS, HEX, FONTS, STATUS, RULES } from '../config/constants.js';
+import { COLORS, HEX, FONTS, STATUS, RULES, TEXTURES } from '../config/constants.js';
 import { t } from '../systems/localizationSystem.js';
 import { listBadgesFromStatuses } from '../systems/statusPresentation.js';
+import { hasRealTexture } from '../systems/assetResolver.js';
 import StatusBadge from './StatusBadge.js';
 
 const PANEL_W = 240;
@@ -18,9 +19,16 @@ export default class StatusPanel extends Phaser.GameObjects.Container {
     scene.add.existing(this);
     this.setSize(PANEL_W, PANEL_H);
 
-    this.bg = scene.add.graphics();
-    this.add(this.bg);
-    this._drawBg();
+    /* 底板：有真图（panel_wood.png）→ 直接拉伸到面板尺寸；否则走 Graphics 占位 */
+    if (hasRealTexture(scene, TEXTURES.PANEL_WOOD)) {
+      this.bgImg = scene.add.image(0, 0, TEXTURES.PANEL_WOOD).setOrigin(0.5);
+      this.bgImg.setDisplaySize(PANEL_W, PANEL_H);
+      this.add(this.bgImg);
+    } else {
+      this.bg = scene.add.graphics();
+      this.add(this.bg);
+      this._drawBg();
+    }
 
     this.title = scene.add
       .text(-PANEL_W / 2 + 16, -PANEL_H / 2 + 14, '橘子大人 · Sir Orange', {
@@ -118,6 +126,7 @@ export default class StatusPanel extends Phaser.GameObjects.Container {
   }
 
   _drawBg() {
+    if (!this.bg) return;
     this.bg.clear();
     this.bg.fillStyle(COLORS.panel, 0.95);
     this.bg.fillRoundedRect(-PANEL_W / 2, -PANEL_H / 2, PANEL_W, PANEL_H, 14);

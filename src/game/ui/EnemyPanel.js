@@ -8,7 +8,7 @@ import { t, getName } from '../systems/localizationSystem.js';
 import IntentView from './IntentView.js';
 import StatusBadge from './StatusBadge.js';
 import { listBadgesFromStatuses } from '../systems/statusPresentation.js';
-import { resolveEnemyPortrait } from '../systems/assetResolver.js';
+import { resolveEnemyPortrait, hasRealTexture } from '../systems/assetResolver.js';
 import { fitImageWithin } from '../utils/layout.js';
 
 const PANEL_W = 280;
@@ -22,9 +22,16 @@ export default class EnemyPanel extends Phaser.GameObjects.Container {
     scene.add.existing(this);
     this.setSize(PANEL_W, PANEL_H);
 
-    this.bg = scene.add.graphics();
-    this.add(this.bg);
-    this._drawBg();
+    /* 底板：有真图（panel_wood.png）→ 直接拉伸到面板尺寸；否则走 Graphics 占位 */
+    if (hasRealTexture(scene, TEXTURES.PANEL_WOOD)) {
+      this.bgImg = scene.add.image(0, 0, TEXTURES.PANEL_WOOD).setOrigin(0.5);
+      this.bgImg.setDisplaySize(PANEL_W, PANEL_H);
+      this.add(this.bgImg);
+    } else {
+      this.bg = scene.add.graphics();
+      this.add(this.bg);
+      this._drawBg();
+    }
 
     /* 头像：先挂占位贴图，update(enemy) 时按 enemy.id 切到正确敌人贴图 */
     this.portrait = scene.add
@@ -140,6 +147,7 @@ export default class EnemyPanel extends Phaser.GameObjects.Container {
   }
 
   _drawBg() {
+    if (!this.bg) return;
     this.bg.clear();
     this.bg.fillStyle(COLORS.panel, 0.95);
     this.bg.fillRoundedRect(-PANEL_W / 2, -PANEL_H / 2, PANEL_W, PANEL_H, 14);

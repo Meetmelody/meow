@@ -248,7 +248,7 @@ reborn-as-a-cat/
 - `resolveBattleBackground(scene, roomId)`：按 roomId 查 `ROOM_BATTLE_BG`
 - `resolveEnemyPortrait(scene, enemyId)`：按 enemyId 查 `ENEMY_PORTRAIT`
 - `resolveEventBackground(scene, eventId)`：按 eventId 查 `EVENT_BG`，缺失回到 `BG_MAP`
-- `hasRealTexture(scene, key)`：判断"真贴图"是否真的加载成功；用于场景按真图 / 占位走轻 / 重蒙版分支（`EventScene` 已使用）
+- `hasRealTexture(scene, key)`：判断"真 PNG"是否真的加载成功（PreloadScene 在 `filecomplete` 时调用 `markRealLoaded(key)` 维护一个 Set，避开"占位 Graphics 也会让 `textures.exists` 返回 true"的歧义）。用法：`EventScene` 决定蒙版强度；`CardView / TextButton / StatusPanel / EnemyPanel` 决定走真图 PNG 还是 Graphics 占位
 - 新增贴图：在 `assetManifest.js` 加一行；占位会自动 fallback
 
 ### 6.8 `statusPresentation.js`
@@ -454,6 +454,7 @@ DemoClearScene
 - ⚠️ **背景图片** 客厅以外（厨房 / 书房 / 阁楼 / 窗台事件）当前都 **fallback 到占位**（厨/书/阁回到客厅；窗台回到月夜地图）+ 全场暗色蒙版区分；放真实图后自动覆盖。`EventScene` 检测到真图会把蒙版从 `0.6` 降到 `0.25`，月光圆叠加亦同步减弱，避免压暗插画。
 - ⚠️ **战斗立绘尺寸** 走包围盒（`SPRITE_BOX` 定义在 `BattleScene.js` 顶部），与源图分辨率解耦：玩家 `300×340`、普通敌人 `320×360`、boss `400×440`。如要整体放大/缩小立绘只改这个常量，不要再加 `setScale`。
 - ⚠️ **EnemyPanel 内的小头像** 同样走包围盒（`PORTRAIT_BOX = 90×90`，定义在 `EnemyPanel.js` 顶部），并在 `update(enemy)` 时按 `enemy.id` 切到正确贴图——别再用 `setScale` + 写死的 `TEXTURES.ROOMBA_GUARD`。
+- ⚠️ **UI 框件三件套（card_frame / button_wood / panel_wood）** 在 v0.3+ 已通过 `hasRealTexture` 实现"有真 PNG 走真图、缺图走 Graphics 占位"分支：`CardView` 跳过 Graphics 描边和类型色条；`TextButton` 用淡金色 tint + 外圈金光当 hover；`StatusPanel / EnemyPanel` 直接拉伸贴图。如果你的 PNG 比例和 Phaser 实际尺寸（按钮 W×H 动态、卡牌 160×220、StatusPanel 240×360、EnemyPanel 280×200）差距大会被拉伸；后续可以升级到 `Phaser.GameObjects.NineSlice`。
 - ⚠️ **构建产物 1.2 MB+**：Phaser 全量打包；后续可考虑按需 import / 拆 chunk。
 
 ### 不是 bug 但要注意

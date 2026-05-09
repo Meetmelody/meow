@@ -6,6 +6,7 @@
 import Phaser from 'phaser';
 import { SCENES, TEXTURES, COLORS, HEX, FONTS } from '../config/constants.js';
 import { IMAGE_MANIFEST } from '../config/assetManifest.js';
+import { markRealLoaded } from '../systems/assetResolver.js';
 
 export default class PreloadScene extends Phaser.Scene {
   constructor() {
@@ -21,6 +22,11 @@ export default class PreloadScene extends Phaser.Scene {
      */
     this.load.on('loaderror', (file) => {
       console.warn(`[Preload] missing asset, fallback to placeholder: ${file.src}`);
+    });
+
+    /* 标记真实成功加载的 key，供 hasRealTexture 区分"真 PNG"与"占位 Graphics" */
+    this.load.on('filecomplete', (key) => {
+      markRealLoaded(key);
     });
 
     for (const item of IMAGE_MANIFEST) {
