@@ -42,7 +42,15 @@ import BattleLogPanel from '../ui/BattleLogPanel.js';
 import TextButton from '../ui/TextButton.js';
 import CardView, { CARD_VIEW_SIZE } from '../ui/CardView.js';
 import LanguageToggleButton from '../ui/LanguageToggleButton.js';
-import { computeHandPositions } from '../utils/layout.js';
+import { computeHandPositions, fitImageWithin } from '../utils/layout.js';
+
+/* 立绘包围盒（最大宽 × 最大高，等比缩放后不变形）
+ * 注意：用包围盒而非 setScale，避免不同源图分辨率导致显示尺寸跑偏 */
+const SPRITE_BOX = {
+  player: { w: 300, h: 340 },
+  enemy: { w: 320, h: 360 },
+  boss: { w: 400, h: 440 },
+};
 
 export default class BattleScene extends Phaser.Scene {
   constructor() {
@@ -80,13 +88,13 @@ export default class BattleScene extends Phaser.Scene {
     /* 日志面板 */
     this.logPanel = new BattleLogPanel(this, GAME_WIDTH - 165, GAME_HEIGHT / 2 + 50);
 
-    /* 玩家立绘 */
+    /* 玩家立绘：用包围盒等比缩放，不依赖源图分辨率 */
     this.playerSprite = this.add
       .image(360, GAME_HEIGHT / 2 + 80, TEXTURES.SIR_ORANGE)
-      .setOrigin(0.5)
-      .setScale(0.95);
+      .setOrigin(0.5);
+    fitImageWithin(this.playerSprite, SPRITE_BOX.player.w, SPRITE_BOX.player.h);
 
-    /* 敌人立绘（按 enemyId 选纹理 / 染色 / 缩放）*/
+    /* 敌人立绘（按 enemyId 选纹理 / 染色 / 包围盒）*/
     this.enemySprite = this._createEnemySprite(enemyId);
 
     /* 抽弃牌堆显示 */
@@ -148,6 +156,7 @@ export default class BattleScene extends Phaser.Scene {
 
   /* ============ 敌人立绘 ============
    * - 通过 resolveEnemyPortrait 取真实贴图 key
+   * - 用包围盒等比缩放（boss 用更大的包围盒）
    * - 真实贴图存在时不做染色；缺失（落回 ROOMBA_GUARD 占位）时按敌人 id 染色区分
    */
   _createEnemySprite(enemyId) {
@@ -156,8 +165,11 @@ export default class BattleScene extends Phaser.Scene {
     const y = GAME_HEIGHT / 2 + 60;
     const portraitKey = resolveEnemyPortrait(this, enemyId);
     const sprite = this.add.image(x, y, portraitKey).setOrigin(0.5);
-    sprite.setScale(1.1);
     sprite.clearTint();
+
+    /* boss 走加大包围盒，普通敌人走标准 */
+    const box = enemyId === 'sofa_shadow' ? SPRITE_BOX.boss : SPRITE_BOX.enemy;
+    fitImageWithin(sprite, box.w, box.h);
 
     if (!def) return sprite;
     /* 真实美术尚未到位时（fallback 到 ROOMBA_GUARD）才染色区分 */
@@ -172,13 +184,10 @@ export default class BattleScene extends Phaser.Scene {
           break;
         case 'sofa_shadow':
           sprite.setTint(0x6b4a8a);
-          sprite.setScale(1.6);
           break;
         default:
           break;
       }
-    } else if (enemyId === 'sofa_shadow') {
-      sprite.setScale(1.4);
     }
     return sprite;
   }

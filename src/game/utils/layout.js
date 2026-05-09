@@ -31,3 +31,22 @@ export function computeHandPositions(handCount, options = {}) {
   }
   return positions;
 }
+
+/**
+ * 等比缩放图片到指定包围盒内（不裁剪、不变形）
+ * - 用 setDisplaySize 取代 setScale，使最终尺寸不依赖源图分辨率
+ * - 取宽高比例的较小值，保证图整体落入 maxWidth × maxHeight
+ *
+ * @param {Phaser.GameObjects.Image|Phaser.GameObjects.Sprite} image
+ * @param {number} maxWidth
+ * @param {number} maxHeight
+ * @returns {{ width: number, height: number, scale: number }}
+ */
+export function fitImageWithin(image, maxWidth, maxHeight) {
+  const w = image?.width || 0;
+  const h = image?.height || 0;
+  if (!w || !h) return { width: 0, height: 0, scale: 1 };
+  const scale = Math.min(maxWidth / w, maxHeight / h);
+  image.setScale(scale);
+  return { width: w * scale, height: h * scale, scale };
+}
