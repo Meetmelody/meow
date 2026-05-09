@@ -8,9 +8,13 @@ import { t, getName } from '../systems/localizationSystem.js';
 import IntentView from './IntentView.js';
 import StatusBadge from './StatusBadge.js';
 import { listBadgesFromStatuses } from '../systems/statusPresentation.js';
+import { resolveEnemyPortrait } from '../systems/assetResolver.js';
+import { fitImageWithin } from '../utils/layout.js';
 
 const PANEL_W = 280;
 const PANEL_H = 200;
+/* 面板内小头像的包围盒（与源图分辨率解耦） */
+const PORTRAIT_BOX = { w: 90, h: 90 };
 
 export default class EnemyPanel extends Phaser.GameObjects.Container {
   constructor(scene, x, y) {
@@ -22,10 +26,11 @@ export default class EnemyPanel extends Phaser.GameObjects.Container {
     this.add(this.bg);
     this._drawBg();
 
+    /* 头像：先挂占位贴图，update(enemy) 时按 enemy.id 切到正确敌人贴图 */
     this.portrait = scene.add
       .image(-PANEL_W / 2 + 60, 0, TEXTURES.ROOMBA_GUARD)
-      .setOrigin(0.5)
-      .setScale(0.7);
+      .setOrigin(0.5);
+    fitImageWithin(this.portrait, PORTRAIT_BOX.w, PORTRAIT_BOX.h);
     this.add(this.portrait);
 
     this.nameText = scene.add
@@ -79,6 +84,14 @@ export default class EnemyPanel extends Phaser.GameObjects.Container {
 
   update(enemy, intentOrIntents) {
     if (!enemy) return;
+    /* 同步当前敌人的小头像（按 enemy.id 切纹理后重新等比缩放） */
+    if (enemy.id) {
+      const desiredKey = resolveEnemyPortrait(this.scene, enemy.id);
+      if (this.portrait.texture?.key !== desiredKey) {
+        this.portrait.setTexture(desiredKey);
+        fitImageWithin(this.portrait, PORTRAIT_BOX.w, PORTRAIT_BOX.h);
+      }
+    }
     this.nameText.setText(getName(enemy));
     this.hpText.setText(`${enemy.hp} / ${enemy.maxHp}`);
     this.blockText.setText(`${enemy.block ?? 0}`);

@@ -453,6 +453,7 @@ DemoClearScene
 - ⚠️ **Tooltip 不跟随鼠标移动**，固定显示在徽章上方；徽章很靠屏幕边缘时已做夹边处理。
 - ⚠️ **背景图片** 客厅以外（厨房 / 书房 / 阁楼 / 窗台事件）当前都 **fallback 到占位**（厨/书/阁回到客厅；窗台回到月夜地图）+ 全场暗色蒙版区分；放真实图后自动覆盖。`EventScene` 检测到真图会把蒙版从 `0.6` 降到 `0.25`，月光圆叠加亦同步减弱，避免压暗插画。
 - ⚠️ **战斗立绘尺寸** 走包围盒（`SPRITE_BOX` 定义在 `BattleScene.js` 顶部），与源图分辨率解耦：玩家 `300×340`、普通敌人 `320×360`、boss `400×440`。如要整体放大/缩小立绘只改这个常量，不要再加 `setScale`。
+- ⚠️ **EnemyPanel 内的小头像** 同样走包围盒（`PORTRAIT_BOX = 90×90`，定义在 `EnemyPanel.js` 顶部），并在 `update(enemy)` 时按 `enemy.id` 切到正确贴图——别再用 `setScale` + 写死的 `TEXTURES.ROOMBA_GUARD`。
 - ⚠️ **构建产物 1.2 MB+**：Phaser 全量打包；后续可考虑按需 import / 拆 chunk。
 
 ### 不是 bug 但要注意
