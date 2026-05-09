@@ -27,7 +27,6 @@ import {
 import { getRoomDef } from '../data/rooms.js';
 import RoomNodeView from '../ui/RoomNodeView.js';
 import TextButton from '../ui/TextButton.js';
-import LanguageToggleButton from '../ui/LanguageToggleButton.js';
 
 export default class MapScene extends Phaser.Scene {
   constructor() {
@@ -61,16 +60,10 @@ export default class MapScene extends Phaser.Scene {
       width: 220,
       height: 56,
       primaryLabel: t('btnBackToMenu'),
-      secondaryLabel: 'Main Menu',
       primaryFontSize: '20px',
     }).onClick(() => {
       saveRun();
       this.scene.start(SCENES.MAIN_MENU);
-    });
-
-    /* 语言切换按钮（顶栏右侧）*/
-    new LanguageToggleButton(this, GAME_WIDTH - 90, 38, {
-      onChanged: () => this.scene.restart(),
     });
 
     saveRun();

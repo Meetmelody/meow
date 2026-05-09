@@ -95,18 +95,18 @@ function applySingleIntent(combat, intent, ctx) {
         remaining -= absorb;
       }
       player.hp = Math.max(0, player.hp - remaining);
-      ctx?.log?.('enemyAttackLog', enemy.nameZh, dmg);
+      ctx?.log?.('enemyAttackLog', enemy.name, dmg);
     }
   } else if (intent.kind === 'block') {
     enemy.block = (enemy.block || 0) + intent.value;
-    ctx?.log?.('enemyBlockLog', enemy.nameZh, intent.value);
+    ctx?.log?.('enemyBlockLog', enemy.name, intent.value);
   } else if (intent.kind === 'debuff') {
     if (!player.statuses) player.statuses = {};
     player.statuses[intent.status] = (player.statuses[intent.status] || 0) + intent.value;
     if (intent.status === STATUS.WEAK) {
-      ctx?.log?.('enemyApplyWeakLog', enemy.nameZh, intent.value);
+      ctx?.log?.('enemyApplyWeakLog', enemy.name, intent.value);
     } else if (intent.status === STATUS.WET) {
-      ctx?.log?.('enemyApplyWetLog', enemy.nameZh, intent.value);
+      ctx?.log?.('enemyApplyWetLog', enemy.name, intent.value);
     }
   }
 }

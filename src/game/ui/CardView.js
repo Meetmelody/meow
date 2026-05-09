@@ -1,11 +1,11 @@
 /**
- * CardView：手牌中的单张卡牌
+ * CardView：手牌中的单张卡牌（中文单语版）
  * - 顶部费用圆章，中部图标占位，底部羊皮纸描述
  * - hover 时上浮 + 金色发光，点击触发 onPlay
  */
 import Phaser from 'phaser';
 import { COLORS, HEX, FONTS, CARD_TYPE, TEXTURES } from '../config/constants.js';
-import { getName, getDesc, getLang, t } from '../systems/localizationSystem.js';
+import { getName, getDesc } from '../systems/localizationSystem.js';
 import { hasRealTexture } from '../systems/assetResolver.js';
 
 const CARD_W = 160;
@@ -20,8 +20,11 @@ const TYPE_COLOR = {
 };
 
 const TYPE_LABEL = {
-  zh: { attack: '攻击', skill: '技能', snack: '零食', trick: '捣乱', power: '能力' },
-  en: { attack: 'Attack', skill: 'Skill', snack: 'Snack', trick: 'Trick', power: 'Power' },
+  attack: '攻击',
+  skill: '技能',
+  snack: '零食',
+  trick: '捣乱',
+  power: '能力',
 };
 
 export default class CardView extends Phaser.GameObjects.Container {
@@ -94,7 +97,7 @@ export default class CardView extends Phaser.GameObjects.Container {
 
     /* 名称 */
     this.nameText = this.scene.add
-      .text(0, -CARD_H / 2 + 26, getName(this.cardDef), {
+      .text(0, -CARD_H / 2 + 30, getName(this.cardDef), {
         fontFamily: FONTS.display,
         fontSize: '16px',
         color: HEX.textMain,
@@ -103,22 +106,8 @@ export default class CardView extends Phaser.GameObjects.Container {
       .setOrigin(0.5);
     this.add(this.nameText);
 
-    /* 英文/中文副名 */
-    const lang = getLang();
-    const subName = lang === 'zh' ? this.cardDef.nameEn : this.cardDef.nameZh;
-    this.subNameText = this.scene.add
-      .text(0, -CARD_H / 2 + 44, subName ?? '', {
-        fontFamily: FONTS.body,
-        fontSize: '10px',
-        color: HEX.textSub,
-        align: 'center',
-      })
-      .setOrigin(0.5);
-    this.add(this.subNameText);
-
     /* 类型标签（小字）*/
-    const typeKey = this.cardDef.type;
-    const typeLabel = TYPE_LABEL[lang]?.[typeKey] ?? typeKey;
+    const typeLabel = TYPE_LABEL[this.cardDef.type] ?? this.cardDef.type;
     this.typeText = this.scene.add
       .text(0, 32, typeLabel, {
         fontFamily: FONTS.body,
@@ -245,16 +234,6 @@ export default class CardView extends Phaser.GameObjects.Container {
     }
   }
 
-  refreshLanguage() {
-    this.nameText.setText(getName(this.cardDef));
-    this.descText.setText(getDesc(this.cardDef));
-    const lang = getLang();
-    const subName = lang === 'zh' ? this.cardDef.nameEn : this.cardDef.nameZh;
-    this.subNameText.setText(subName ?? '');
-    this.typeText.setText(TYPE_LABEL[lang]?.[this.cardDef.type] ?? this.cardDef.type);
-    /* 兼容：i18n 标签暂未在 strings 里使用 */
-    void t;
-  }
 }
 
 export const CARD_VIEW_SIZE = { width: CARD_W, height: CARD_H };

@@ -12,14 +12,13 @@ import {
   COLORS,
   FONTS,
 } from '../config/constants.js';
-import { getLang, t } from '../systems/localizationSystem.js';
+import { t } from '../systems/localizationSystem.js';
 import { getEventDef } from '../data/events.js';
 import { applyEventOption } from '../systems/eventSystem.js';
 import { markRoomCleared, saveRun } from '../systems/runState.js';
 import { resolveEventBackground, hasRealTexture } from '../systems/assetResolver.js';
 import { EVENT_BG } from '../config/assetManifest.js';
 import TextButton from '../ui/TextButton.js';
-import LanguageToggleButton from '../ui/LanguageToggleButton.js';
 
 const CARD_W = 760;
 const CARD_H = 380;
@@ -78,11 +77,6 @@ export default class EventScene extends Phaser.Scene {
         wordWrap: { width: GAME_WIDTH - 80 },
       })
       .setOrigin(0.5);
-
-    /* 语言切换 */
-    new LanguageToggleButton(this, GAME_WIDTH - 90, 38, {
-      onChanged: () => this.scene.restart(),
-    });
   }
 
   /* ============ 渲染 ============ */
@@ -102,7 +96,6 @@ export default class EventScene extends Phaser.Scene {
   _drawTextContent(def) {
     const cx = GAME_WIDTH / 2;
     const cy = GAME_HEIGHT / 2 - 60;
-    const lang = getLang();
 
     /* 装饰星点 */
     this.add.text(cx, cy - CARD_H / 2 + 32, '✦', {
@@ -113,7 +106,7 @@ export default class EventScene extends Phaser.Scene {
 
     /* 标题 */
     this.add
-      .text(cx, cy - CARD_H / 2 + 70, lang === 'zh' ? def.titleZh : def.titleEn, {
+      .text(cx, cy - CARD_H / 2 + 80, def.title, {
         fontFamily: FONTS.display,
         fontSize: '36px',
         color: HEX.gold,
@@ -121,19 +114,9 @@ export default class EventScene extends Phaser.Scene {
       .setOrigin(0.5)
       .setShadow(0, 0, '#e8b84a', 18, true, true);
 
-    /* 副标题（另一种语言） */
-    this.add
-      .text(cx, cy - CARD_H / 2 + 108, lang === 'zh' ? def.titleEn : def.titleZh, {
-        fontFamily: FONTS.body,
-        fontSize: '14px',
-        color: HEX.textSub,
-        letterSpacing: 4,
-      })
-      .setOrigin(0.5);
-
     /* 正文 */
     this.add
-      .text(cx, cy - CARD_H / 2 + 170, lang === 'zh' ? def.bodyZh : def.bodyEn, {
+      .text(cx, cy - CARD_H / 2 + 150, def.body, {
         fontFamily: FONTS.body,
         fontSize: '16px',
         color: HEX.cream,
@@ -149,17 +132,15 @@ export default class EventScene extends Phaser.Scene {
     const baseY = GAME_HEIGHT / 2 + 130;
     const gap = 20;
     const btnW = 240;
-    const btnH = 76;
+    const btnH = 70;
     const totalW = btnW * def.options.length + gap * (def.options.length - 1);
     const startX = cx - totalW / 2 + btnW / 2;
-    const lang = getLang();
 
     def.options.forEach((opt, idx) => {
       const btn = new TextButton(this, startX + idx * (btnW + gap), baseY, {
         width: btnW,
         height: btnH,
-        primaryLabel: lang === 'zh' ? opt.labelZh : opt.labelEn,
-        secondaryLabel: lang === 'zh' ? opt.labelEn : opt.labelZh,
+        primaryLabel: opt.label,
         primaryFontSize: '20px',
       }).onClick(() => this._handleChoose(idx));
       /* 入场淡入 */
@@ -178,7 +159,7 @@ export default class EventScene extends Phaser.Scene {
 
   _renderError() {
     this.add
-      .text(GAME_WIDTH / 2, GAME_HEIGHT / 2, '事件未找到 / Event not found', {
+      .text(GAME_WIDTH / 2, GAME_HEIGHT / 2, '事件未找到', {
         fontFamily: FONTS.body,
         fontSize: '20px',
         color: HEX.textSub,
@@ -188,7 +169,6 @@ export default class EventScene extends Phaser.Scene {
       width: 240,
       height: 60,
       primaryLabel: t('btnBackToMap'),
-      secondaryLabel: 'Back to Map',
       primaryFontSize: '20px',
     }).onClick(() => this.scene.start(SCENES.MAP));
   }
@@ -199,9 +179,7 @@ export default class EventScene extends Phaser.Scene {
     const opt = this.def.options[optionIndex];
     applyEventOption(opt);
 
-    const lang = getLang();
-    const resultText = lang === 'zh' ? opt.resultZh : opt.resultEn;
-    if (resultText) this.resultText.setText(resultText);
+    if (opt.result) this.resultText.setText(opt.result);
 
     /* 标记房间已清理（按 nextRoomId 自动解锁后续）*/
     if (this.payload.fromRoomId) {

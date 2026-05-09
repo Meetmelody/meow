@@ -25,13 +25,11 @@ export const CARD_RARITY = {
 export const CARDS = {
   paw_punch: {
     id: 'paw_punch',
-    nameZh: '猫猫拳',
-    nameEn: 'Paw Punch',
+    name: '猫猫拳',
     cost: 1,
     type: CARD_TYPE.ATTACK,
     rarity: CARD_RARITY.BASIC,
-    descriptionZh: '造成 6 点伤害。\n饱腹 ≥ 9 时，额外 +2。',
-    descriptionEn: 'Deal 6 damage.\nIf Fullness ≥ 9, deal +2 more.',
+    description: '造成 6 点伤害。\n饱腹 ≥ 9 时，额外 +2。',
     effects: [
       {
         type: 'damage',
@@ -43,25 +41,21 @@ export const CARDS = {
 
   belly_guard: {
     id: 'belly_guard',
-    nameZh: '护住肚皮',
-    nameEn: 'Belly Guard',
+    name: '护住肚皮',
     cost: 1,
     type: CARD_TYPE.SKILL,
     rarity: CARD_RARITY.BASIC,
-    descriptionZh: '获得 5 点格挡。',
-    descriptionEn: 'Gain 5 Block.',
+    description: '获得 5 点格挡。',
     effects: [{ type: 'block', value: 5 }],
   },
 
   sneak_fish_snack: {
     id: 'sneak_fish_snack',
-    nameZh: '偷吃小鱼干',
-    nameEn: 'Sneak a Fish Snack',
+    name: '偷吃小鱼干',
     cost: 1,
     type: CARD_TYPE.SNACK,
     rarity: CARD_RARITY.BASIC,
-    descriptionZh: '获得 2 点饱腹。\n抽 1 张牌。',
-    descriptionEn: 'Gain 2 Fullness.\nDraw 1 card.',
+    description: '获得 2 点饱腹。\n抽 1 张牌。',
     effects: [
       { type: 'gain_fullness', value: 2 },
       { type: 'draw', value: 1 },
@@ -70,13 +64,11 @@ export const CARDS = {
 
   knock_over_cup: {
     id: 'knock_over_cup',
-    nameZh: '打翻水杯',
-    nameEn: 'Knock Over Cup',
+    name: '打翻水杯',
     cost: 1,
     type: CARD_TYPE.TRICK,
     rarity: CARD_RARITY.COMMON,
-    descriptionZh: '造成 4 点伤害。\n施加 1 层虚弱。',
-    descriptionEn: 'Deal 4 damage.\nApply 1 Weak.',
+    description: '造成 4 点伤害。\n施加 1 层虚弱。',
     effects: [
       { type: 'damage', value: 4 },
       { type: 'apply_status', target: 'enemy', status: 'weak', value: 1 },
@@ -85,13 +77,11 @@ export const CARDS = {
 
   orange_crush: {
     id: 'orange_crush',
-    nameZh: '橘座压顶',
-    nameEn: 'Orange Crush',
+    name: '橘座压顶',
     cost: 2,
     type: CARD_TYPE.ATTACK,
     rarity: CARD_RARITY.COMMON,
-    descriptionZh: '造成 12 点伤害。\n饱腹 ≥ 6 额外 +8。\n饱腹 ≥ 9 攻击牌再 +2。',
-    descriptionEn: 'Deal 12 damage.\nIf Fullness ≥ 6, deal +8 more.\nIf Fullness ≥ 9, all Attacks +2.',
+    description: '造成 12 点伤害。\n饱腹 ≥ 6 额外 +8。\n饱腹 ≥ 9 攻击牌再 +2。',
     effects: [
       {
         type: 'damage',
@@ -108,13 +98,11 @@ export const CARDS = {
 
   healing_purr: {
     id: 'healing_purr',
-    nameZh: '呼噜疗愈',
-    nameEn: 'Healing Purr',
+    name: '呼噜疗愈',
     cost: 1,
     type: CARD_TYPE.SKILL,
     rarity: CARD_RARITY.COMMON,
-    descriptionZh: '回复 3 点生命。\n获得 4 点格挡。',
-    descriptionEn: 'Heal 3 HP.\nGain 4 Block.',
+    description: '回复 3 点生命。\n获得 4 点格挡。',
     effects: [
       { type: 'heal', value: 3 },
       { type: 'block', value: 4 },
@@ -123,13 +111,11 @@ export const CARDS = {
 
   lazy_stretch: {
     id: 'lazy_stretch',
-    nameZh: '懒洋洋',
-    nameEn: 'Lazy Stretch',
+    name: '懒洋洋',
     cost: 0,
     type: CARD_TYPE.SKILL,
     rarity: CARD_RARITY.COMMON,
-    descriptionZh: '获得 2 点格挡。\n下回合多抽 1 张牌。',
-    descriptionEn: 'Gain 2 Block.\nDraw +1 next turn.',
+    description: '获得 2 点格挡。\n下回合多抽 1 张牌。',
     effects: [
       { type: 'block', value: 2 },
       { type: 'next_turn_draw_bonus', value: 1 },
@@ -138,13 +124,11 @@ export const CARDS = {
 
   fish_snack_rain: {
     id: 'fish_snack_rain',
-    nameZh: '鱼干雨',
-    nameEn: 'Fish Snack Rain',
+    name: '鱼干雨',
     cost: 2,
     type: CARD_TYPE.SNACK,
     rarity: CARD_RARITY.UNCOMMON,
-    descriptionZh: '获得 5 点饱腹。',
-    descriptionEn: 'Gain 5 Fullness.',
+    description: '获得 5 点饱腹。',
     effects: [{ type: 'gain_fullness', value: 5 }],
   },
 };

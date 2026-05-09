@@ -1,6 +1,6 @@
 /**
  * MainMenuScene：主菜单
- * - 标题 + 副标题 + Start / Continue + 语言切换
+ * - 标题 + 副标题 + Start / Continue
  * - Continue 区域显示存档摘要（v0.3）
  */
 import Phaser from 'phaser';
@@ -17,7 +17,6 @@ import { t } from '../systems/localizationSystem.js';
 import { startNewRun, loadRun, isRunStarted } from '../systems/runState.js';
 import { hasSave, getSaveSummary } from '../systems/saveSystem.js';
 import TextButton from '../ui/TextButton.js';
-import LanguageToggleButton from '../ui/LanguageToggleButton.js';
 import SaveSummaryPanel from '../ui/SaveSummaryPanel.js';
 
 export default class MainMenuScene extends Phaser.Scene {
@@ -51,9 +50,9 @@ export default class MainMenuScene extends Phaser.Scene {
       .setOrigin(0.5)
       .setShadow(0, 0, '#e8b84a', 24, true, true);
 
-    /* 副标题（中文） */
+    /* 副标题 */
     this.add
-      .text(cx, 280, t('subtitle'), {
+      .text(cx, 282, t('subtitle'), {
         fontFamily: FONTS.body,
         fontSize: '22px',
         color: HEX.cream,
@@ -61,23 +60,13 @@ export default class MainMenuScene extends Phaser.Scene {
       })
       .setOrigin(0.5);
 
-    /* 英文小字 */
-    this.add
-      .text(cx, 318, t('titleEn'), {
-        fontFamily: FONTS.body,
-        fontSize: '14px',
-        color: HEX.textSub,
-        letterSpacing: 4,
-      })
-      .setOrigin(0.5);
-
     /* 装饰分隔线 */
     const line = this.add.graphics();
     line.lineStyle(1, COLORS.gold, 0.6);
-    line.lineBetween(cx - 160, 348, cx - 30, 348);
-    line.lineBetween(cx + 30, 348, cx + 160, 348);
+    line.lineBetween(cx - 160, 332, cx - 30, 332);
+    line.lineBetween(cx + 30, 332, cx + 160, 332);
     this.add
-      .text(cx, 348, '✦', {
+      .text(cx, 332, '✦', {
         fontFamily: FONTS.display,
         fontSize: '18px',
         color: HEX.goldSoft,
@@ -89,7 +78,6 @@ export default class MainMenuScene extends Phaser.Scene {
       width: 280,
       height: 70,
       primaryLabel: t('btnStart'),
-      secondaryLabel: 'Start Game',
       primaryFontSize: '26px',
     }).onClick(() => this._handleStart());
 
@@ -97,7 +85,6 @@ export default class MainMenuScene extends Phaser.Scene {
       width: 280,
       height: 70,
       primaryLabel: t('btnContinue'),
-      secondaryLabel: 'Continue',
       primaryFontSize: '26px',
     }).onClick(() => this._handleContinue());
 
@@ -121,11 +108,6 @@ export default class MainMenuScene extends Phaser.Scene {
     /* 存档摘要面板（在 Continue 按钮右侧）*/
     this.summaryPanel = new SaveSummaryPanel(this, cx + 280, 510);
     this.summaryPanel.update(getSaveSummary());
-
-    /* 语言切换按钮（右上角）*/
-    new LanguageToggleButton(this, GAME_WIDTH - 90, 38, {
-      onChanged: () => this.scene.restart(),
-    });
 
     /* 底部存档提示 */
     this.add

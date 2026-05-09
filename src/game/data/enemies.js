@@ -15,8 +15,7 @@ export const ENEMIES = {
   /* 客厅：扫地机器人 */
   roomba_guard: {
     id: 'roomba_guard',
-    nameZh: '扫地机器人',
-    nameEn: 'Roomba Guard',
+    name: '扫地机器人',
     tier: 'normal',
     maxHp: 42,
     block: 0,
@@ -28,8 +27,7 @@ export const ENEMIES = {
    */
   fridge_wisp: {
     id: 'fridge_wisp',
-    nameZh: '冰箱冷气怪',
-    nameEn: 'Fridge Wisp',
+    name: '冰箱冷气怪',
     tier: 'normal',
     maxHp: 48,
     block: 0,
@@ -39,8 +37,7 @@ export const ENEMIES = {
   /* 书房：纸团精 */
   paper_sprite: {
     id: 'paper_sprite',
-    nameZh: '纸团精',
-    nameEn: 'Paper Sprite',
+    name: '纸团精',
     tier: 'normal',
     maxHp: 52,
     block: 0,
@@ -50,8 +47,7 @@ export const ENEMIES = {
   /* 阁楼：沙发之下的巨影（v0.2 Boss） */
   sofa_shadow: {
     id: 'sofa_shadow',
-    nameZh: '沙发之下的巨影',
-    nameEn: 'The Shadow Beneath the Sofa',
+    name: '沙发之下的巨影',
     tier: 'boss',
     maxHp: 88,
     block: 0,

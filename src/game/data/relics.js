@@ -6,10 +6,8 @@
 export const RELICS = {
   warm_cushion: {
     id: 'warm_cushion',
-    nameZh: '温暖的猫垫',
-    nameEn: 'Warm Cushion',
-    descZh: '战斗开始时获得 2 点格挡。（占位，效果暂未生效）',
-    descEn: 'Gain 2 Block at the start of combat. (Placeholder)',
+    name: '温暖的猫垫',
+    desc: '战斗开始时获得 2 点格挡。（占位，效果暂未生效）',
   },
 };
 

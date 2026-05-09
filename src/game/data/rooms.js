@@ -2,77 +2,67 @@
  * 房间 / 节点数据（v0.2）
  *
  * 字段：
- *   id, nameZh, nameEn         名称
- *   type                       'combat' | 'event' | 'boss'
- *   enemyId / eventId          根据 type 取一个
- *   descZh / descEn            描述
- *   nextRoomId                 完成后自动解锁的下一间房（推进顺序）
- *   roomEffect                 进入房间额外效果（v0.2 暂留 null）
+ *   id, name                    名称
+ *   type                        'combat' | 'event' | 'boss'
+ *   enemyId / eventId           根据 type 取一个
+ *   desc                        描述
+ *   nextRoomId                  完成后自动解锁的下一间房（推进顺序）
+ *   roomEffect                  进入房间额外效果（v0.2 暂留 null）
  */
 import { ROOM_TYPE, ROOM_STATUS } from '../config/constants.js';
 
 export const ROOMS = {
   living_room: {
     id: 'living_room',
-    nameZh: '客厅',
-    nameEn: 'Living Room',
+    name: '客厅',
     type: ROOM_TYPE.COMBAT,
     enemyId: 'roomba_guard',
     eventId: null,
-    descZh: '月光从落地窗洒进来，扫地机器人开始它的午夜巡逻。',
-    descEn: 'Moonlight spills through the window as the Roomba begins its midnight patrol.',
+    desc: '月光从落地窗洒进来，扫地机器人开始它的午夜巡逻。',
     nextRoomId: 'kitchen',
     roomEffect: null,
   },
 
   kitchen: {
     id: 'kitchen',
-    nameZh: '厨房',
-    nameEn: 'Kitchen',
+    name: '厨房',
     type: ROOM_TYPE.COMBAT,
     enemyId: 'fridge_wisp',
     eventId: null,
-    descZh: '冰箱里似乎有什么在动，冷气从门缝里慢慢溢出。',
-    descEn: 'Something moves inside the fridge, and cold mist leaks from the door.',
+    desc: '冰箱里似乎有什么在动，冷气从门缝里慢慢溢出。',
     nextRoomId: 'windowsill',
     roomEffect: null,
   },
 
   windowsill: {
     id: 'windowsill',
-    nameZh: '窗台',
-    nameEn: 'Windowsill',
+    name: '窗台',
     type: ROOM_TYPE.EVENT,
     enemyId: null,
     eventId: 'moonlight_windowsill',
-    descZh: '窗台上落着一束月光，远处传来一只乌鸦的叫声。',
-    descEn: 'Moonlight rests on the windowsill. A crow calls from far away.',
+    desc: '窗台上落着一束月光，远处传来一只乌鸦的叫声。',
     nextRoomId: 'study',
     roomEffect: null,
   },
 
   study: {
     id: 'study',
-    nameZh: '书房',
-    nameEn: 'Study',
+    name: '书房',
     type: ROOM_TYPE.COMBAT,
     enemyId: 'paper_sprite',
     eventId: null,
-    descZh: '书页在没有风的地方翻动，纸团像小精灵一样跳了起来。',
-    descEn: 'Pages turn where there is no wind. Paper balls jump like tiny spirits.',
+    desc: '书页在没有风的地方翻动，纸团像小精灵一样跳了起来。',
     nextRoomId: 'attic',
     roomEffect: null,
   },
 
   attic: {
     id: 'attic',
-    nameZh: '阁楼',
-    nameEn: 'Attic',
+    name: '阁楼',
     type: ROOM_TYPE.BOSS,
     enemyId: 'sofa_shadow',
     eventId: null,
-    descZh: '旧沙发下传来低语，巨大的影子正在醒来。',
-    descEn: 'Whispers rise beneath an old sofa. A great shadow is waking.',
+    desc: '旧沙发下传来低语，巨大的影子正在醒来。',
     nextRoomId: null,
     roomEffect: null,
   },

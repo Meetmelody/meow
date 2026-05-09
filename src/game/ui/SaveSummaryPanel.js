@@ -103,10 +103,6 @@ export default class SaveSummaryPanel extends Phaser.GameObjects.Container {
     this.statText.setText(stats);
   }
 
-  refreshLanguage(summary) {
-    this.update(summary);
-  }
-
   _drawBg() {
     this.bg.clear();
     this.bg.fillStyle(COLORS.panel, 0.9);

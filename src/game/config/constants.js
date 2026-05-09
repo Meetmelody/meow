@@ -158,6 +158,3 @@ export const ROOM_TYPE = {
 /* ========== 存档 ========== */
 export const SAVE_KEY = 'meow_manor_save_v1';
 export const SAVE_VERSION = 1;
-
-/* ========== 默认语言 ========== */
-export const DEFAULT_LANG = 'zh';

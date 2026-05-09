@@ -10,7 +10,7 @@
 - **中文名**：喵呜宅邸：重生之我是一只猫
 - **英文名**：Meow Manor: Reborn as a Cat
 - **类型**：2D Web 单机卡牌 Roguelike Demo
-- **当前版本**：v0.3（Polishing Sprint 完成）
+- **当前版本**：v0.3.x（Polishing Sprint 完成 + 中文单语精简）
 - **目标体验**：温暖、神秘、轻怪诞的"猫咪宅邸夜晚冒险"
 - **当前 Demo 体量**：1 局可通关流程，5 个房间（客厅 → 厨房 → 窗台 → 书房 → 阁楼 Boss）
 - **不要做**：登录、注册、多人、后端、数据库。所有持久化走 `localStorage`。
@@ -27,7 +27,7 @@
 | Lint | ESLint 9.x（`@eslint/js` recommended + 轻量 unused-vars 配置）|
 | 包管理 | npm |
 | 字体 | Google Fonts: `Ma Shan Zheng`（display）、`Noto Sans SC`（body）|
-| 持久化 | `localStorage`（单存档槽 + 语言偏好）|
+| 持久化 | `localStorage`（单存档槽）|
 | 图形 | Phaser `Graphics.generateTexture` 生成占位贴图，真实美术放进 `public/assets/...` 自动覆盖 |
 
 > ⚠️ **不要引入** React / Vue / Tailwind / TypeScript / 任何 UI 框架。  
@@ -64,7 +64,7 @@ reborn-as-a-cat/
 │       │   └── icons/                 # 预留
 │       └── audio/{bgm,sfx}/           # 预留（v0.4 用）
 └── src/
-    ├── main.js                        # 入口：先 initLangFromStorage()，再 new Phaser.Game()
+    ├── main.js                        # 入口：直接 new Phaser.Game()（中文单语，无需读 lang）
     └── game/
         ├── config/
         │   ├── constants.js           # 颜色 / 字体 / 场景键 / 纹理键 / 事件键 / PLAYER_INIT / RULES / STATUS / 房间状态 / SAVE_KEY
@@ -76,11 +76,11 @@ reborn-as-a-cat/
         │   ├── rooms.js               # 5 个房间 + DEMO_MAP_NODES + nextRoomId 链
         │   ├── relics.js              # 占位（warm_cushion，效果未生效）
         │   ├── events.js              # moonlight_windowsill 事件
-        │   └── localization.js        # zh / en 文案
+        │   └── localization.js        # 平铺 STRINGS（中文单语）
         ├── systems/                   # ↓↓↓ 业务逻辑层（不依赖 Phaser，除 combatSystem 用 EE）
         │   ├── runState.js            # 单例：玩家长期状态 / 牌组 / 地图进度
         │   ├── saveSystem.js          # localStorage 读写 + getSaveSummary()
-        │   ├── localizationSystem.js  # setLang/onLangChanged/initLangFromStorage
+        │   ├── localizationSystem.js  # 中文直通的 t / getName / getDesc（无切换）
         │   ├── deckSystem.js          # drawCards / discardHand / discardCardAt
         │   ├── effectResolver.js      # 卡牌 effect 分发
         │   ├── enemyIntentSystem.js   # pattern 解析（含 + 多动作）
@@ -91,7 +91,7 @@ reborn-as-a-cat/
         │   └── assetResolver.js       # 真实图 vs 占位 fallback
         ├── ui/                        # ↓↓↓ 全部继承 Phaser.GameObjects.Container
         │   ├── BaseButton.js          # 通用可点击容器基类
-        │   ├── TextButton.js          # 木牌按钮（中英双行）
+        │   ├── TextButton.js          # 木牌按钮（中文单行）
         │   ├── CardView.js            # 单张卡牌
         │   ├── StatusPanel.js         # 玩家左侧状态面板（含 StatusBadge）
         │   ├── EnemyPanel.js          # 敌人面板（含 IntentView + StatusBadge）
@@ -100,12 +100,11 @@ reborn-as-a-cat/
         │   ├── RoomNodeView.js        # 地图节点（Boss 强化版）
         │   ├── StatusBadge.js         # 单个状态徽章（hover → tooltip）
         │   ├── Tooltip.js             # 场景级共享 tooltip + attachTooltip()
-        │   ├── SaveSummaryPanel.js    # 主菜单存档摘要
-        │   └── LanguageToggleButton.js# 中英药丸切换
+        │   └── SaveSummaryPanel.js    # 主菜单存档摘要
         ├── scenes/
         │   ├── BootScene.js           # 空跳板 → PreloadScene
         │   ├── PreloadScene.js        # 加载 manifest + 生成占位贴图
-        │   ├── MainMenuScene.js       # Start / Continue / 摘要 / 语言
+        │   ├── MainMenuScene.js       # Start / Continue / 摘要
         │   ├── MapScene.js            # 5 个房间节点
         │   ├── BattleScene.js         # 通用战斗（任何 enemyId）
         │   ├── RewardScene.js         # 三选一 + 跳过
@@ -141,9 +140,15 @@ reborn-as-a-cat/
 - **状态可视化**：`StatusBadge` + `Tooltip`，hover 出深色金边描述
 - **Boss 节点视觉**：紫色呼吸光晕、紫色描边、加大 BOSS 徽章、locked 时仍 0.7 alpha 显示
 - **Continue 摘要**：MainMenu 显示存档时间 / 当前房间 / HP / 鱼干币 / 牌组数
-- **中英语言切换**：`LanguageToggleButton` 出现在所有场景；持久化到 `localStorage`；战斗内"软刷新"不重启
 - **资源接入机制**：`assetManifest.js` + `assetResolver.js`，真实图片缺失自动 fallback
 - **轻量 polish**：满足状态闪现、Continue 加载 toast、DemoClear 标题呼吸、节点 ✓ 勾选
+
+### v0.3.x：中文单语精简
+- 移除 `LanguageToggleButton` 和 `setLang/onLangChanged/initLangFromStorage`
+- 数据对象统一收为单字段：`name / description / desc / title / body / label / result`（去掉 `Zh/En` 后缀）
+- `localization.js` 由 `{ zh, en }` 嵌套展平为单层 `STRINGS`
+- `BattleScene._softRefreshLanguage` 删除；TextButton 删除 `secondaryLabel`
+- 重启 i18n 的迁移路径写在 `localizationSystem.js` 与 `data/localization.js` 文件头注释里
 
 ---
 
@@ -155,7 +160,7 @@ reborn-as-a-cat/
 | --- | --- | --- | --- |
 | BootScene | `scenes/BootScene.js` | — | 立刻 `scene.start(PRELOAD)` |
 | PreloadScene | `scenes/PreloadScene.js` | — | 1) 遍历 `IMAGE_MANIFEST` 加载真图 2) `loaderror` 静默 3) `create()` 中生成占位贴图 4) 跳 MAIN_MENU |
-| MainMenuScene | `scenes/MainMenuScene.js` | — | 标题 / Start / Continue / `SaveSummaryPanel` / 语言切换；Continue 成功 toast 后跳 MAP |
+| MainMenuScene | `scenes/MainMenuScene.js` | — | 标题 / Start / Continue / `SaveSummaryPanel`；Continue 成功 toast 后跳 MAP |
 | MapScene | `scenes/MapScene.js` | — | 5 个 `RoomNodeView`；`isDemoCleared()` → 直跳通关页；点击按 `room.type` 路由到 BATTLE 或 EVENT；locked/cleared 用 toast 不跳场景 |
 | BattleScene | `scenes/BattleScene.js` | `{ roomId, enemyId, isBoss }` | 通用战斗；`startCombat({ runDeck, runPlayer, enemyId })`；boss 胜利跳 DEMO_CLEAR；普通胜利跳 REWARD |
 | RewardScene | `scenes/RewardScene.js` | `{ fromRoomId }` | 随机抽 3 张奖励卡；选择 → `addCardToDeck` → MAP；跳过 → MAP |
@@ -164,11 +169,9 @@ reborn-as-a-cat/
 | DemoClearScene | `scenes/DemoClearScene.js` | — | Boss 通关页；再来一局 / 回主菜单 |
 
 ### 场景内通用约定
-- **顶部右侧 (`x = GAME_WIDTH - 90, y = 38`)**：`LanguageToggleButton`
-  - 默认行为：`scene.restart()`
-  - **BattleScene 例外**：传 `onChanged: () => this._softRefreshLanguage()`
 - **入场过渡**：用 `this.cameras.main.fadeIn(280, 0, 0, 0)`
 - **房间跳转过渡**：MapScene 用 `cameras.main.fadeOut + once('camerafadeoutcomplete')`
+- **顶部右侧 (`x = GAME_WIDTH - 90, y = 38`)**：v0.3.x 之前是语言按钮位；现已留空，未来加设置/音量按钮可复用
 
 ---
 
@@ -237,11 +240,16 @@ reborn-as-a-cat/
 - 支持 effect type：`heal / lose_hp / gain_coins / gain_fullness`
 - **不要把战斗效果与事件效果混用**，二者作用对象不同（combat.player vs runState.player）
 
-### 6.6 `localizationSystem.js`
-- 单例 `state.lang`（默认 `'zh'`）
-- 持久化：`localStorage['meow_manor_lang_v1']`
-- API：`t(key)` / `getName(def)` / `getDesc(def)` / `setLang(lang)` / `onLangChanged(handler)` / `initLangFromStorage()`
-- **入口已在 `src/main.js` 调用 `initLangFromStorage()`**，新场景不用手动初始化
+### 6.6 `localizationSystem.js`（中文单语版，v0.3.x）
+- 仅暴露三个查询入口：`t(key)` / `getName(def)` / `getDesc(def)`
+- 没有任何运行时切换、持久化、事件订阅
+- 文案表 `data/localization.js` 是平铺的 `STRINGS`（不再 `{ zh, en }` 嵌套）
+- **重启 i18n 的迁移路径**（写在源码文件头注释里也有）：
+  1. `data/localization.js` 改回 `{ zh, en }` 嵌套
+  2. 这里恢复 `setLang / onLangChanged / initLangFromStorage`
+  3. 数据对象重新加 `nameEn / descriptionEn / titleEn` 等字段
+  4. 在 `main.js` 重新调用 `initLangFromStorage()`
+  5. `ui/` 下复活 `LanguageToggleButton.js` 并按需插入场景
 
 ### 6.7 `assetResolver.js`
 - `resolveTexture(scene, key)`：scene 已有 → 返回；否则查 `assetManifest.fallback`；都没有 → `TEXTURES.PLACEHOLDER`
@@ -269,11 +277,11 @@ reborn-as-a-cat/
 ```js
 {
   id: 'paw_punch',
-  nameZh, nameEn,
+  name,                             // 中文单字段（v0.3.x）
   cost: 1,
   type: CARD_TYPE.ATTACK,           // attack | skill | snack | trick | power
   rarity: 'basic',                  // basic | common | uncommon | rare
-  descriptionZh, descriptionEn,
+  description,                      // 中文单字段
   effects: [ /* effectResolver 可识别的指令对象 */ ],
 }
 ```
@@ -286,7 +294,7 @@ reborn-as-a-cat/
 ```js
 {
   id: 'sofa_shadow',
-  nameZh, nameEn,
+  name,                             // 中文单字段
   tier: 'normal' | 'boss',
   maxHp: 88,
   block: 0,
@@ -302,10 +310,10 @@ reborn-as-a-cat/
 ```js
 {
   id: 'kitchen',
-  nameZh, nameEn,
+  name,                             // 中文单字段
   type: ROOM_TYPE.COMBAT,           // combat | event | boss | rest
   enemyId, eventId,                 // 二选一
-  descZh, descEn,
+  desc,                             // 中文单字段
   nextRoomId: 'windowsill',         // 通关后自动解锁
   roomEffect: null,                 // 预留
 }
@@ -318,11 +326,11 @@ reborn-as-a-cat/
 ### 7.4 事件（events.js）
 ```js
 {
-  id, titleZh/En, bodyZh/En,
+  id, title, body,                  // 中文单字段
   options: [
     {
-      labelZh, labelEn,
-      resultZh, resultEn,
+      label,                        // 中文单字段
+      result,                       // 中文单字段（可选，作为日志）
       effects: [
         { type: 'heal', value: 8 },
         { type: 'gain_coins', value: 35 },
@@ -437,17 +445,16 @@ DemoClearScene
 ```
 - "currentRoomId" 取地图上 **第一个 unlocked 的房间**；都 cleared → 取最后一个 cleared
 
-### 9.3 语言偏好
-- **Key**：`meow_manor_lang_v1`
-- **值**：`'zh'` | `'en'`
-- **入口读取**：`src/main.js` 调 `initLangFromStorage()` 后再创建 `Phaser.Game`
+### 9.3 语言偏好（v0.3.x 已下线）
+- v0.3 一度使用 `meow_manor_lang_v1` 持久化中英语言偏好
+- v0.3.x 已移除运行时切换；该 key 不再读写，旧值即便残留也无影响
+- 重启 i18n 时按 §6.6 的迁移路径恢复
 
 ---
 
 ## 10. 目前已知问题 / 限制
 
 ### 已知问题
-- ⚠️ **战斗中切换语言** 走的是 **软刷新**：`StatusPanel/EnemyPanel/IntentView` 的状态徽章会刷新；但**手牌可能瞬时闪一下**（卡牌 hover 状态会丢失，通过 `_refreshHand()` 重建）。
 - ⚠️ **`relics`** 仅有 `warm_cushion` 占位，**实际效果未生效**。
 - ⚠️ **`Wet` debuff** 当前仅扣下回合能量；不会在 UI 上播放粒子等强反馈。
 - ⚠️ **Tooltip 不跟随鼠标移动**，固定显示在徽章上方；徽章很靠屏幕边缘时已做夹边处理。
@@ -501,7 +508,7 @@ DemoClearScene
 | `data/rooms.js` | 房间静态数据 + DEMO_MAP_NODES |
 | `data/events.js` | 事件静态数据 |
 | `data/relics.js` | 遗物静态数据（v0.3 占位）|
-| `data/localization.js` | 全部 UI 文案 + 日志模板 |
+| `data/localization.js` | 全部 UI 文案 + 日志模板（中文单语，平铺 STRINGS）|
 | `systems/runState.js` | 玩家长期状态单例（**唯一可写入 player/deck/map 的地方**）|
 | `systems/saveSystem.js` | localStorage 读写 + getSaveSummary |
 | `systems/combatSystem.js` | 战斗状态机 + EventEmitter（**唯一持有 combat 对象的地方**）|
@@ -510,7 +517,7 @@ DemoClearScene
 | `systems/eventSystem.js` | 事件选项效果（影响 runState）|
 | `systems/deckSystem.js` | 牌堆纯函数操作 |
 | `systems/rewardSystem.js` | 奖励池抽取 |
-| `systems/localizationSystem.js` | 当前语言状态 + 持久化 |
+| `systems/localizationSystem.js` | t / getName / getDesc 中文直通（v0.3.x 已无切换/持久化）|
 | `systems/statusPresentation.js` | 状态徽章元数据 |
 | `systems/assetResolver.js` | 真图 vs 占位 fallback |
 | `config/constants.js` | **唯一**集中放魔法值的地方（颜色 / 字体 / 场景键 / 事件键 / 状态键 / 玩家初值 / 规则）|
@@ -533,7 +540,7 @@ DemoClearScene
 - ✅ 加新内容：先想清楚是 **数据**（去 `data/`）还是 **规则**（去 `systems/`）还是 **视觉**（去 `ui/`）。
 - ✅ 加新场景：在 `constants.SCENES` 加 key、`gameConfig.scene` 数组里注册、新建 `scenes/XxxScene.js` 继承 `Phaser.Scene`。
 - ✅ 加新 UI 组件：放在 `ui/` 下，继承 `Phaser.GameObjects.Container`，文件名 PascalCase。
-- ✅ 加文案：在 `data/localization.js` 的 `zh` 和 `en` **同时**加；动态字符串用函数 `(arg) => 'xxx'`。
+- ✅ 加文案：在 `data/localization.js` 的平铺 `STRINGS` 上加 key（中文）；动态字符串用函数 `(arg) => 'xxx'`。重启 i18n 时再恢复 `{ zh, en }` 嵌套。
 - ✅ 加新状态：见 §6.8 的 4 件套。
 - ✅ 加新效果类型：在 `effectResolver.applyEffect` 加 case；同时在 `cards.js` 写示例描述。
 
@@ -563,6 +570,6 @@ npm run build   # 必须 success
 
 ---
 
-**文档版本**：与 v0.3 一致  
+**文档版本**：与 v0.3.x 一致（中文单语精简）  
 **最后更新**：2026-05-09  
 **联系/恢复方法**：把整份文档贴给新会话即可继续开发。

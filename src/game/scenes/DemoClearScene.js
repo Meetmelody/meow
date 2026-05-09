@@ -16,7 +16,6 @@ import {
 import { t } from '../systems/localizationSystem.js';
 import { resetRun, startNewRun } from '../systems/runState.js';
 import TextButton from '../ui/TextButton.js';
-import LanguageToggleButton from '../ui/LanguageToggleButton.js';
 
 export default class DemoClearScene extends Phaser.Scene {
   constructor() {
@@ -75,23 +74,13 @@ export default class DemoClearScene extends Phaser.Scene {
       repeat: -1,
     });
 
-    /* 副标题（英文） */
-    this.add
-      .text(GAME_WIDTH / 2, 268, 'Demo Cleared · Meow Manor', {
-        fontFamily: FONTS.body,
-        fontSize: '16px',
-        color: HEX.textSub,
-        letterSpacing: 6,
-      })
-      .setOrigin(0.5);
-
     /* 装饰分隔线 */
     const line = this.add.graphics();
     line.lineStyle(1, COLORS.gold, 0.55);
-    line.lineBetween(GAME_WIDTH / 2 - 180, 308, GAME_WIDTH / 2 - 30, 308);
-    line.lineBetween(GAME_WIDTH / 2 + 30, 308, GAME_WIDTH / 2 + 180, 308);
+    line.lineBetween(GAME_WIDTH / 2 - 180, 296, GAME_WIDTH / 2 - 30, 296);
+    line.lineBetween(GAME_WIDTH / 2 + 30, 296, GAME_WIDTH / 2 + 180, 296);
     this.add
-      .text(GAME_WIDTH / 2, 308, '✦', {
+      .text(GAME_WIDTH / 2, 296, '✦', {
         fontFamily: FONTS.display,
         fontSize: '18px',
         color: HEX.goldSoft,
@@ -115,7 +104,6 @@ export default class DemoClearScene extends Phaser.Scene {
       width: 280,
       height: 64,
       primaryLabel: t('btnPlayAgain'),
-      secondaryLabel: 'Play Again',
       primaryFontSize: '22px',
     }).onClick(() => {
       resetRun();
@@ -128,15 +116,9 @@ export default class DemoClearScene extends Phaser.Scene {
       width: 280,
       height: 64,
       primaryLabel: t('btnBackToMenu'),
-      secondaryLabel: 'Main Menu',
       primaryFontSize: '22px',
     }).onClick(() => {
       this.scene.start(SCENES.MAIN_MENU);
-    });
-
-    /* 语言切换 */
-    new LanguageToggleButton(this, GAME_WIDTH - 90, 38, {
-      onChanged: () => this.scene.restart(),
     });
 
     /* 入场淡入 */

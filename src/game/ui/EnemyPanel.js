@@ -107,13 +107,6 @@ export default class EnemyPanel extends Phaser.GameObjects.Container {
     this._renderBadges(listBadgesFromStatuses(enemy.statuses || {}));
   }
 
-  refreshLanguage() {
-    if (this.hpLabel) this.hpLabel.setText(t('labelHp'));
-    if (this.blockLabel) this.blockLabel.setText(t('labelBlock'));
-    if (this.intentView?.update) this.intentView.update(this.intentView.lastIntents);
-    for (const badge of this._badges) badge.refreshLanguage();
-  }
-
   _renderBadges(badges) {
     for (const b of this._badges) b.destroy();
     this._badges = [];

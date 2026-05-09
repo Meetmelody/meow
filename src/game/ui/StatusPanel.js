@@ -31,7 +31,7 @@ export default class StatusPanel extends Phaser.GameObjects.Container {
     }
 
     this.title = scene.add
-      .text(-PANEL_W / 2 + 16, -PANEL_H / 2 + 14, '橘子大人 · Sir Orange', {
+      .text(-PANEL_W / 2 + 16, -PANEL_H / 2 + 14, '橘子大人', {
         fontFamily: FONTS.display,
         fontSize: '18px',
         color: HEX.gold,
@@ -97,11 +97,6 @@ export default class StatusPanel extends Phaser.GameObjects.Container {
     }
 
     this._renderBadges(listBadgesFromStatuses(merged));
-  }
-
-  refreshLanguage() {
-    for (const row of this._rows) row.labelText.setText(row.label());
-    for (const badge of this._badges) badge.refreshLanguage();
   }
 
   _renderBadges(badges) {

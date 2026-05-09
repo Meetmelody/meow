@@ -13,7 +13,6 @@ import {
 import { t } from '../systems/localizationSystem.js';
 import { resetRun, startNewRun } from '../systems/runState.js';
 import TextButton from '../ui/TextButton.js';
-import LanguageToggleButton from '../ui/LanguageToggleButton.js';
 
 export default class GameOverScene extends Phaser.Scene {
   constructor() {
@@ -48,7 +47,6 @@ export default class GameOverScene extends Phaser.Scene {
       width: 280,
       height: 64,
       primaryLabel: t('btnRetry'),
-      secondaryLabel: 'Try Again',
       primaryFontSize: '22px',
     }).onClick(() => {
       resetRun();
@@ -60,16 +58,10 @@ export default class GameOverScene extends Phaser.Scene {
       width: 280,
       height: 64,
       primaryLabel: t('btnBackToMenu'),
-      secondaryLabel: 'Main Menu',
       primaryFontSize: '22px',
     }).onClick(() => {
       resetRun();
       this.scene.start(SCENES.MAIN_MENU);
-    });
-
-    /* 语言切换 */
-    new LanguageToggleButton(this, GAME_WIDTH - 90, 38, {
-      onChanged: () => this.scene.restart(),
     });
 
     void COLORS;

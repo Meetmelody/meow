@@ -26,7 +26,6 @@ import { getCardDef } from '../data/cards.js';
 import { getEnemyDef } from '../data/enemies.js';
 import { resolveBattleBackground, resolveEnemyPortrait } from '../systems/assetResolver.js';
 import { STRINGS } from '../data/localization.js';
-import { getLang } from '../systems/localizationSystem.js';
 import {
   startCombat,
   playCard,
@@ -41,7 +40,6 @@ import EnemyPanel from '../ui/EnemyPanel.js';
 import BattleLogPanel from '../ui/BattleLogPanel.js';
 import TextButton from '../ui/TextButton.js';
 import CardView, { CARD_VIEW_SIZE } from '../ui/CardView.js';
-import LanguageToggleButton from '../ui/LanguageToggleButton.js';
 import { computeHandPositions, fitImageWithin } from '../utils/layout.js';
 
 /* 立绘包围盒（最大宽 × 最大高，等比缩放后不变形）
@@ -125,17 +123,11 @@ export default class BattleScene extends Phaser.Scene {
       width: 220,
       height: 60,
       primaryLabel: t('btnEndTurn'),
-      secondaryLabel: 'End Turn',
       primaryFontSize: '20px',
     }).onClick(() => endTurn({ EVENTS }));
 
     /* 浮动伤害容器 */
     this.fxLayer = this.add.container(0, 0);
-
-    /* 语言切换按钮（软刷新：不重启场景，避免重置战斗状态）*/
-    new LanguageToggleButton(this, GAME_WIDTH - 90, 38, {
-      onChanged: () => this._softRefreshLanguage(),
-    });
 
     /* 满足状态弹窗节流：避免每个 PLAYER_CHANGED 都弹 */
     this._wasSatisfied = false;
@@ -222,8 +214,7 @@ export default class BattleScene extends Phaser.Scene {
       this.turnText.setText(`${t('labelTurn')} ${turn}`);
     });
     ee.on(EVENTS.LOG, ({ key, args }) => {
-      const dict = STRINGS[getLang()] || STRINGS.zh;
-      const entry = dict[key];
+      const entry = STRINGS[key];
       const message = typeof entry === 'function' ? entry(...args) : entry ?? key;
       this.logPanel.push(message);
       /* 触发常见效果反馈 */
@@ -380,31 +371,6 @@ export default class BattleScene extends Phaser.Scene {
 
   shutdown() {
     getEmitter().removeAllListeners();
-  }
-
-  /* ============ 语言软刷新（不重启场景） ============ */
-  /**
-   * 当玩家在战斗中切换语言时：
-   * - 仅刷新固定 UI 文本与状态徽章语言
-   * - 不重新初始化战斗（保留 combat 状态、手牌、回合数）
-   */
-  _softRefreshLanguage() {
-    const combat = getCombat();
-    if (combat) {
-      this.statusPanel.update(combat.player);
-      this.enemyPanel.update(
-        combat.enemy,
-        getCurrentIntents(combat.enemy)
-      );
-      this.drawText.setText(`${t('labelDraw')}：${combat.piles.drawPile.length}`);
-      this.discardText.setText(`${t('labelDiscard')}：${combat.piles.discardPile.length}`);
-      this.turnText.setText(`${t('labelTurn')} ${combat.turn}`);
-    }
-    if (this.endTurnBtn?.setLabel) {
-      this.endTurnBtn.setLabel(t('btnEndTurn'), 'End Turn');
-    }
-    /* 重画手牌（卡名/描述切换语言）*/
-    this._refreshHand();
   }
 
   /* ============ 满足状态闪现提示 ============ */

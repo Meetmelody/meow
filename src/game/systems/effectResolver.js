@@ -25,7 +25,7 @@ function logT(ctx, key, ...args) {
 }
 
 function getEnemyName(combat) {
-  return combat?.enemy?.nameZh || combat?.enemy?.id || 'Enemy';
+  return combat?.enemy?.name || combat?.enemy?.id || 'Enemy';
 }
 
 /**

@@ -267,12 +267,6 @@ export default class RoomNodeView extends Phaser.GameObjects.Container {
     }
   }
 
-  refreshLanguage() {
-    this.nameText.setText(getName(this.roomDef));
-    this.descText.setText(getDesc(this.roomDef));
-    this.typeBadge.setText(t(TYPE_KEY[this.roomDef.type] ?? 'nodeTypeCombat'));
-    this.statusText.setText(t(STATUS_KEY[this.status] ?? 'nodeStatusLocked'));
-  }
 }
 
 export const ROOM_NODE_SIZE = { width: NODE_W, height: NODE_H };

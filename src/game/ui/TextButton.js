@@ -1,7 +1,7 @@
 /**
- * TextButton：木牌按钮，支持中英双语上下排版
- * - 主标题：中文（更大）
- * - 副标题：英文小字（可选）
+ * TextButton：木牌按钮（中文单语版）
+ * - 仅显示主标题，原副标题字段已下线
+ * - 重启 i18n 时再恢复 secondaryLabel 双行排版
  */
 import { COLORS, HEX, FONTS, TEXTURES } from '../config/constants.js';
 import { hasRealTexture } from '../systems/assetResolver.js';
@@ -27,10 +27,9 @@ export default class TextButton extends BaseButton {
     this.add(this.glow);
 
     const primary = options.primaryLabel ?? '';
-    const secondary = options.secondaryLabel ?? '';
 
     this.primaryText = scene.add
-      .text(0, secondary ? -10 : 0, primary, {
+      .text(0, 0, primary, {
         fontFamily: FONTS.display,
         fontSize: options.primaryFontSize ?? '24px',
         color: HEX.cream,
@@ -38,26 +37,11 @@ export default class TextButton extends BaseButton {
       .setOrigin(0.5);
     this.add(this.primaryText);
 
-    if (secondary) {
-      this.secondaryText = scene.add
-        .text(0, 14, secondary, {
-          fontFamily: FONTS.body,
-          fontSize: options.secondaryFontSize ?? '12px',
-          color: HEX.textSub,
-          letterSpacing: 1,
-        })
-        .setOrigin(0.5);
-      this.add(this.secondaryText);
-    }
-
     this._drawNormal();
   }
 
-  setLabel(primary, secondary) {
+  setLabel(primary) {
     if (typeof primary === 'string') this.primaryText.setText(primary);
-    if (typeof secondary === 'string' && this.secondaryText) {
-      this.secondaryText.setText(secondary);
-    }
     return this;
   }
 
@@ -79,7 +63,6 @@ export default class TextButton extends BaseButton {
       this.bg.strokeRoundedRect(-w / 2 + 5, -h / 2 + 5, w - 10, h - 10, 9);
     }
     if (this.primaryText) this.primaryText.setColor(HEX.cream);
-    if (this.secondaryText) this.secondaryText.setColor(HEX.textSub);
   }
 
   _drawHover() {

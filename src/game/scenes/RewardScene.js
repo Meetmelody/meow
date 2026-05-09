@@ -18,7 +18,6 @@ import { getCardDef } from '../data/cards.js';
 import { rollRewardCardIds } from '../systems/rewardSystem.js';
 import CardView, { CARD_VIEW_SIZE } from '../ui/CardView.js';
 import TextButton from '../ui/TextButton.js';
-import LanguageToggleButton from '../ui/LanguageToggleButton.js';
 
 export default class RewardScene extends Phaser.Scene {
   constructor() {
@@ -87,14 +86,8 @@ export default class RewardScene extends Phaser.Scene {
       width: 240,
       height: 60,
       primaryLabel: t('btnSkipReward'),
-      secondaryLabel: 'Skip Reward',
       primaryFontSize: '20px',
     }).onClick(() => this._handleBack());
-
-    /* 语言切换 */
-    new LanguageToggleButton(this, GAME_WIDTH - 90, 38, {
-      onChanged: () => this.scene.restart(),
-    });
   }
 
   _handlePick(cardId) {

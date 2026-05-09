@@ -63,11 +63,6 @@ export default class StatusBadge extends Phaser.GameObjects.Container {
     this._layout();
   }
 
-  refreshLanguage() {
-    this.titleText.setText(this._labelText());
-    this._layout();
-  }
-
   /* ===== 内部 ===== */
   _labelText() {
     const name = t(this.present.titleKey);
