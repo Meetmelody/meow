@@ -17,9 +17,10 @@
 - **Project Inspector**：[Vercel Dashboard](https://vercel.com/meetmelodyin-8018s-projects/reborn-as-a-cat)
 - **GitHub 仓库**：[Meetmelody/meow](https://github.com/Meetmelody/meow)
 
-> ⚠️ 当前 GitHub 自动同步**未启用**（你的 Vercel 账号缺一个 GitHub Login Connection）。
-> 解决：登录 [Vercel Dashboard → Account Settings → Login Connections](https://vercel.com/account/login-connections) 把 GitHub 加上，再回 Project Settings → Git 关联仓库 `Meetmelody/meow`，之后 push 就会自动 deploy。
-> 在那之前，每次发布请用本仓库根目录跑 `npx vercel --prod`（约 30 秒）。
+> ✅ **GitHub 自动部署已启用**（Vercel 项目已绑定 `Meetmelody/meow`）。
+> - `main` 分支：每次 push 自动部署到 Production，URL 别名 `reborn-as-a-cat.vercel.app` 自动指向最新版
+> - 其它分支 / PR：自动产生独立 Preview URL（评论也会贴到 PR 里）
+> - 本地兜底：仍可随时 `npx vercel --prod` 手动发布（约 30 秒，绕开 Git）
 
 ## 三、本地命令
 
